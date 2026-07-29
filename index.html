@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Shift Clock</title>
+<style>
+  :root{
+    --bg: #1c1f22;
+    --bg-card: #22262a;
+    --bg-row: #26292d;
+    --line: #34393e;
+    --text: #f2f0eb;
+    --text-dim: #9aa0a5;
+    --amber: #e8a33d;
+    --green: #6fae7c;
+    --red: #c8654f;
+    --blue: #7fa8c9;
+    --mono: 'Courier New', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html,body{
+    margin:0;
+    padding:0;
+    min-height:100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    overflow-y: auto;
+  }
+
+  body{
+    display:flex;
+    flex-direction: column;
+    align-items:center;
+    justify-content:flex-start;
+    padding: 40px 24px;
+  }
+
+  .ticket{
+    width: 100%;
+    max-width: 380px;
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 32px 28px 28px;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+  }
+
+  .ticket::before,
+  .ticket::after{
+    content:"";
+    position:absolute;
+    left: -8px; right:-8px;
+    height: 16px;
+    background-image: radial-gradient(circle, var(--bg) 5px, transparent 5.5px);
+    background-size: 20px 20px;
+    background-position: 0 center;
+  }
+  .ticket::before{ top: -8px; }
+  .ticket::after{ bottom: -8px; }
+
+  .eyebrow{
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin: 0 0 6px;
+    text-align:center;
+  }
+
+  .pill{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin: 4px 0 20px;
+  }
+  .dot{ width:7px; height:7px; border-radius:50%; background: var(--text-dim); }
+  .pill.working .dot{ background: var(--amber); box-shadow: 0 0 0 4px rgba(232,163,61,0.15); }
+  .pill.working{ color: var(--amber); }
+  .pill.break .dot{ background: var(--blue); }
+  .pill.break{ color: var(--blue); }
+  .pill.done .dot{ background: var(--green); }
+  .pill.done{ color: var(--green); }
+  .pill.idle .dot{ background: var(--text-dim); }
+  .pill.idle{ color: var(--text-dim); }
+
+  .status{
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    padding: 12px 14px;
+    border: 1px dashed var(--line);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    font-size: 13px;
+  }
+  .status .label{ color: var(--text-dim); }
+  .status .value{
+    font-family: var(--mono);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .buttons{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 18px 0 22px;
+  }
+
+  button{
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    padding: 14px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+    transition: transform 0.08s ease, background 0.15s ease, border-color 0.15s ease, filter 0.15s ease;
+  }
+
+  button:active{ transform: scale(0.97); }
+
+  button:disabled{
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  #swipeIn:not(:disabled){
+    background: var(--amber);
+    border-color: var(--amber);
+    color: #221a0a;
+  }
+  #swipeIn:not(:disabled):hover{ filter: brightness(1.08); }
+
+  #swipeOut:not(:disabled){
+    background: var(--red);
+    border-color: var(--red);
+    color: #241210;
+  }
+  #swipeOut:not(:disabled):hover{ filter: brightness(1.08); }
+
+  .logout-panel{
+    border-top: 1px solid var(--line);
+    padding-top: 18px;
+    text-align:center;
+  }
+
+  .logout-label{
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin: 0 0 6px;
+  }
+
+  .logout-time{
+    font-family: var(--mono);
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+    margin: 0 0 4px;
+  }
+
+  .logout-note{
+    font-size: 12px;
+    color: var(--text-dim);
+    min-height: 16px;
+  }
+
+  .reset-row{
+    text-align:center;
+    margin-top: 18px;
+  }
+
+  .reset-link{
+    background:none;
+    border:none;
+    color: var(--text-dim);
+    font-size: 12px;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 4px;
+  }
+  .reset-link:hover{ color: var(--text); }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition: none !important; }
+  }
+
+  .watermark{
+    margin-top: 18px;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    color: var(--text);
+    opacity: 0.85;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+  <div class="ticket">
+    <div class="pill idle" id="statusPill">
+      <span class="dot"></span>
+      <span id="statusText">Not started</span>
+    </div>
+
+    <div class="status">
+      <span class="label">Worked today</span>
+      <span class="value" id="workedValue">0h 00m</span>
+    </div>
+    <div class="status">
+      <span class="label">Remaining</span>
+      <span class="value" id="remainingValue">4h 00m</span>
+    </div>
+
+    <div class="buttons">
+      <button id="swipeIn">Swipe In</button>
+      <button id="swipeOut" disabled>Swipe Out</button>
+    </div>
+
+    <div class="logout-panel">
+      <p class="logout-label">Projected logout</p>
+      <p class="logout-time" id="logoutTime">—:—:—</p>
+      <p class="logout-note" id="logoutNote">Swipe in to start your shift.</p>
+    </div>
+
+    <div class="reset-row">
+      <button class="reset-link" id="resetBtn">reset today</button>
+    </div>
+  </div>
+
+  <p class="watermark">a Sandeep Kumar production</p>
+
+<script>
+  (function(){
+    var SHIFT_MS = 4 * 60 * 60 * 1000; // 4 hours of actual work, breaks excluded
+
+    var STORAGE_KEY = 'shiftClockV2';
+
+    var els = {
+      statusPill: document.getElementById('statusPill'),
+      statusText: document.getElementById('statusText'),
+      workedValue: document.getElementById('workedValue'),
+      remainingValue: document.getElementById('remainingValue'),
+      swipeInBtn: document.getElementById('swipeIn'),
+      swipeOutBtn: document.getElementById('swipeOut'),
+      logoutTime: document.getElementById('logoutTime'),
+      logoutNote: document.getElementById('logoutNote'),
+      resetBtn: document.getElementById('resetBtn')
+    };
+
+    function todayKey(d){
+      d = d || new Date();
+      return d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate();
+    }
+
+    function loadState(){
+      try{
+        var raw = localStorage.getItem(STORAGE_KEY);
+        if(!raw) return null;
+        var state = JSON.parse(raw);
+        if(state.day !== todayKey()) return null; // fresh day, fresh state
+        return state;
+      }catch(e){ return null; }
+    }
+
+    function saveState(state){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    var state = loadState() || { day: todayKey(), sessions: [] };
+
+    function activeSession(){
+      var last = state.sessions[state.sessions.length - 1];
+      return (last && last.outAt === null) ? last : null;
+    }
+
+    function completedMs(){
+      var sum = 0;
+      state.sessions.forEach(function(s){
+        if(s.outAt !== null) sum += (s.outAt - s.inAt);
+      });
+      return sum;
+    }
+
+    function totalWorkedMs(now){
+      var active = activeSession();
+      return completedMs() + (active ? (now - active.inAt) : 0);
+    }
+
+    function fmtTime(ts){
+      if(!ts && ts !== 0) return '—';
+      var d = new Date(ts);
+      return d.toLocaleTimeString([], { hour: '2-digit', minute:'2-digit', second:'2-digit' });
+    }
+
+    function fmtHM(ms){
+      var totalMin = Math.floor(ms / 60000);
+      var h = Math.floor(totalMin / 60);
+      var m = totalMin % 60;
+      return h + 'h ' + (m < 10 ? '0' : '') + m + 'm';
+    }
+
+    function render(){
+      var now = Date.now();
+      var active = activeSession();
+      var completed = completedMs();
+      var worked = totalWorkedMs(now);
+      var remaining = Math.max(0, SHIFT_MS - worked);
+
+      els.workedValue.textContent = fmtHM(worked);
+      els.remainingValue.textContent = remaining > 0 ? fmtHM(remaining) : 'Target reached';
+
+      els.swipeInBtn.disabled = !!active;
+      els.swipeOutBtn.disabled = !active;
+
+      els.statusPill.className = 'pill';
+      if(active){
+        els.statusPill.classList.add('working');
+        els.statusText.textContent = 'Working';
+      } else if(state.sessions.length === 0){
+        els.statusPill.classList.add('idle');
+        els.statusText.textContent = 'Not started';
+      } else if(remaining <= 0){
+        els.statusPill.classList.add('done');
+        els.statusText.textContent = 'Target reached';
+      } else {
+        els.statusPill.classList.add('break');
+        els.statusText.textContent = 'On break';
+      }
+
+      // Projected logout is only shown while actively swiped in. Any gap
+      // between a swipe-out and the next swipe-in is a break and is never
+      // counted toward the 4h target or the projection.
+      if(active){
+        var projectedLogout = active.inAt + (SHIFT_MS - completed);
+        els.logoutTime.textContent = fmtTime(projectedLogout);
+        if(now >= projectedLogout){
+          els.logoutNote.textContent = '4h00 of work reached — swipe out any time';
+        } else {
+          els.logoutNote.textContent = 'excludes breaks taken so far';
+        }
+      } else {
+        els.logoutTime.textContent = '—:—:—';
+        if(state.sessions.length === 0){
+          els.logoutNote.textContent = 'Swipe in to start your shift.';
+        } else if(remaining <= 0){
+          els.logoutNote.textContent = '4h00 of work completed today';
+        } else {
+          els.logoutNote.textContent = 'On break — ' + fmtHM(remaining) + ' of work still needed';
+        }
+      }
+    }
+
+    function tickClock(){
+      render();
+    }
+
+    els.swipeInBtn.addEventListener('click', function(){
+      if(activeSession()) return;
+      if(state.day !== todayKey()){
+        state = { day: todayKey(), sessions: [] };
+      }
+      state.sessions.push({ inAt: Date.now(), outAt: null });
+      saveState(state);
+      render();
+    });
+
+    els.swipeOutBtn.addEventListener('click', function(){
+      var active = activeSession();
+      if(!active) return;
+      active.outAt = Date.now();
+      saveState(state);
+      render();
+    });
+
+    els.resetBtn.addEventListener('click', function(){
+      state = { day: todayKey(), sessions: [] };
+      saveState(state);
+      render();
+    });
+
+    tickClock();
+    setInterval(tickClock, 1000);
+  })();
+</script>
+
+</body>
+</html>
