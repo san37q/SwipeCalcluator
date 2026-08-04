@@ -30,6 +30,7 @@
     button:hover .icon { transform:translateX(7px) rotate(-12deg) scale(1.18); }
     .out:hover .icon { transform:translateX(-7px) rotate(12deg) scale(1.18); }
     .hint { margin:20px 0 0; color:#91a0a8; font-size:.74rem; }
+    .credit { margin:16px -25px -22px; padding:12px 25px 14px; border-top:1px solid rgba(23,35,45,.07); color:#9aa8b0; font-size:.68rem; letter-spacing:.14em; font-weight:800; text-transform:uppercase; }
     .reset { margin-top:13px; padding:5px 10px; border-radius:8px; background:transparent; box-shadow:none; color:#87959d; font-size:.75rem; font-weight:700; }
     .reset:hover { transform:none!important; box-shadow:none; color:#e5674d; }
     .burst { position:fixed; pointer-events:none; font-size:1.35rem; animation:pop .8s ease-out forwards; }
@@ -49,6 +50,7 @@
     </div>
     <button class="reset" id="reset">Start over</button>
     <p class="hint">Time away is paused and deducted automatically.</p>
+    <footer class="credit">A Sandeep Kumar production</footer>
   </main>
   <script>
     const target = 4 * 60 * 60 * 1000;
