@@ -4,180 +4,107 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Logout Time</title>
-<meta name="description" content="Swipe in, swipe out, and find out exactly when you're free to go." />
 <meta name="theme-color" content="#fbfaf8" />
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🕓</text></svg>" />
 <style>
-  :root{
-    --bg:#fbfaf8;
-    --card:#ffffff;
-    --ink:#16150f;
-    --muted:#8b8779;
-    --line:#eae7df;
-    --green:#12a150;
-    --green-deep:#0b7a3b;
-    --amber:#e08a00;
-    --amber-deep:#b06b00;
-    --accent:#16150f;
-    --radius:20px;
-  }
+  :root{ --bg:#fbfaf8; --ink:#16150f; --muted:#96917f; --green:#12a150; }
 
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-
   html,body{height:100%}
 
   body{
     font-family:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
     background:var(--bg);
     color:var(--ink);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:28px 18px calc(28px + env(safe-area-inset-bottom));
+    display:flex;align-items:center;justify-content:center;
+    padding:32px 22px calc(32px + env(safe-area-inset-bottom));
     line-height:1.5;
     -webkit-font-smoothing:antialiased;
-    background-image:radial-gradient(circle at 12% 0%,#f3efe6 0%,transparent 45%),
-                     radial-gradient(circle at 92% 100%,#eef3f0 0%,transparent 42%);
   }
 
-  .app{width:100%;max-width:440px}
+  main{width:100%;max-width:340px;text-align:center}
 
-  /* ---------- header ---------- */
-  header{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:14px;padding:0 4px}
-  h1{font-size:15px;font-weight:650;letter-spacing:-.01em}
-  h1 span{opacity:.55;font-weight:500}
-  .today{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
-
-  /* ---------- card ---------- */
-  .card{
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    padding:26px 22px 22px;
-    box-shadow:0 1px 2px rgba(20,18,10,.04),0 12px 32px -18px rgba(20,18,10,.22);
+  /* ---------- the number ---------- */
+  .label{
+    font-size:10.5px;text-transform:uppercase;letter-spacing:.16em;
+    color:var(--muted);font-weight:600;
   }
-
-  /* ---------- status ---------- */
-  .status{
-    display:inline-flex;align-items:center;gap:7px;
-    font-size:12px;font-weight:600;letter-spacing:.02em;
-    padding:5px 11px 5px 9px;border-radius:999px;
-    background:#f4f2ec;color:var(--muted);
-    transition:background .25s,color .25s;
-  }
-  .dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
-  .status.in{background:#e7f7ee;color:var(--green-deep)}
-  .status.in .dot{animation:pulse 1.6s ease-in-out infinite}
-  .status.out{background:#fdf1dd;color:var(--amber-deep)}
-  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.8)}}
-
-  /* ---------- big number ---------- */
-  .readout{margin:18px 0 4px;text-align:center}
-  .label{font-size:11px;text-transform:uppercase;letter-spacing:.11em;color:var(--muted);font-weight:600}
   .time{
-    font-size:clamp(46px,15vw,62px);
-    font-weight:680;
-    letter-spacing:-.035em;
+    font-size:clamp(52px,17vw,68px);
+    font-weight:660;letter-spacing:-.04em;line-height:1.05;
     font-variant-numeric:tabular-nums;
-    line-height:1.08;
-    margin-top:6px;
-    transition:color .3s;
+    margin:10px 0 0;
+    transition:color .35s;
   }
-  .time.pending{color:#c9c4b7;font-size:clamp(30px,9vw,38px);letter-spacing:-.02em}
+  .time em{font-style:normal;font-size:.4em;font-weight:600;letter-spacing:0;margin-left:5px;color:var(--muted)}
+  .time.pending{color:#cdc8ba;font-size:clamp(34px,10vw,42px);letter-spacing:-.02em}
   .time.done{color:var(--green)}
-  .time em{font-style:normal;font-size:.42em;font-weight:600;letter-spacing:0;margin-left:4px;color:var(--muted)}
-  .sub{font-size:13px;color:var(--muted);margin-top:8px;min-height:20px}
-  .sub b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
 
-  /* ---------- progress ---------- */
-  .bar{height:7px;border-radius:99px;background:#f0ede5;overflow:hidden;margin:20px 0 10px}
-  .fill{height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,#f5b301,#12a150);transition:width .5s cubic-bezier(.22,1,.36,1)}
-  .legend{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
-  .legend b{color:var(--ink);font-weight:600}
+  .sub{
+    font-size:13px;color:var(--muted);margin-top:12px;
+    font-variant-numeric:tabular-nums;min-height:20px;
+  }
+  .sub b{color:var(--ink);font-weight:600}
 
   /* ---------- buttons ---------- */
-  .actions{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:22px}
+  .actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:38px}
   .btn{
-    position:relative;
-    border:none;border-radius:16px;
-    padding:16px 10px 15px;
+    position:relative;overflow:hidden;
+    border:none;border-radius:16px;padding:17px 8px 16px;
     font:inherit;font-size:15px;font-weight:650;letter-spacing:-.01em;
     color:#fff;cursor:pointer;
-    display:flex;flex-direction:column;align-items:center;gap:3px;
-    transition:transform .16s cubic-bezier(.34,1.7,.5,1),box-shadow .16s,filter .16s,opacity .2s;
+    display:flex;flex-direction:column;align-items:center;gap:4px;
+    transition:transform .16s cubic-bezier(.34,1.7,.5,1),box-shadow .16s,filter .16s,opacity .25s;
     will-change:transform;
-    overflow:hidden;
   }
-  .btn .emoji{font-size:22px;line-height:1;display:block;transition:transform .3s cubic-bezier(.34,1.8,.5,1)}
-  .btn .txt{opacity:.97}
-  .btn::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.35),transparent 60%);opacity:0;transition:opacity .3s}
+  .btn .emoji{font-size:23px;line-height:1;transition:transform .3s cubic-bezier(.34,1.8,.5,1)}
+  .btn::after{
+    content:"";position:absolute;inset:0;opacity:0;transition:opacity .3s;
+    background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.32),transparent 60%);
+  }
   .btn:hover:not(:disabled)::after{opacity:1}
 
-  .btn.in{background:linear-gradient(160deg,#18b95c,#0d8f43);box-shadow:0 5px 0 #0a6c33,0 10px 20px -10px rgba(13,143,67,.7)}
-  .btn.out{background:linear-gradient(160deg,#f2a413,#d47f04);box-shadow:0 5px 0 #a86205,0 10px 20px -10px rgba(212,127,4,.65)}
+  .btn.in{background:linear-gradient(160deg,#18b95c,#0d8f43);box-shadow:0 5px 0 #0a6c33,0 12px 22px -12px rgba(13,143,67,.75)}
+  .btn.out{background:linear-gradient(160deg,#f2a413,#d47f04);box-shadow:0 5px 0 #a86205,0 12px 22px -12px rgba(212,127,4,.7)}
 
-  .btn:hover:not(:disabled){transform:translateY(-2px) rotate(-.7deg)}
-  .btn.out:hover:not(:disabled){transform:translateY(-2px) rotate(.7deg)}
-  .btn:hover:not(:disabled) .emoji{transform:scale(1.22) rotate(-9deg)}
-  .btn.out:hover:not(:disabled) .emoji{transform:scale(1.22) rotate(9deg)}
+  .btn.in:hover:not(:disabled){transform:translateY(-2px) rotate(-.8deg)}
+  .btn.out:hover:not(:disabled){transform:translateY(-2px) rotate(.8deg)}
+  .btn.in:hover:not(:disabled) .emoji{transform:scale(1.24) rotate(-10deg)}
+  .btn.out:hover:not(:disabled) .emoji{transform:scale(1.24) rotate(10deg)}
 
-  .btn:active:not(:disabled){transform:translateY(5px) scale(.97);box-shadow:0 0 0 currentColor,0 3px 10px -6px rgba(0,0,0,.5)}
+  .btn:active:not(:disabled){transform:translateY(5px) scale(.97)}
   .btn.in:active:not(:disabled){box-shadow:0 0 0 #0a6c33}
   .btn.out:active:not(:disabled){box-shadow:0 0 0 #a86205}
 
-  .btn:disabled{filter:grayscale(.85) brightness(1.22);opacity:.5;cursor:not-allowed;box-shadow:0 3px 0 rgba(0,0,0,.08)}
+  .btn:disabled{filter:grayscale(.9) brightness(1.24);opacity:.42;cursor:not-allowed;box-shadow:0 3px 0 rgba(0,0,0,.07)}
   .btn.nope{animation:nope .38s cubic-bezier(.36,.07,.19,.97)}
   @keyframes nope{10%,90%{transform:translateX(-3px)}20%,80%{transform:translateX(5px)}30%,50%,70%{transform:translateX(-7px)}40%,60%{transform:translateX(7px)}}
 
-  .quip{
-    text-align:center;font-size:13px;color:var(--muted);
-    margin-top:13px;min-height:19px;
-    transition:opacity .2s,transform .2s;
-  }
-  .quip.pop{animation:quip .4s cubic-bezier(.34,1.6,.5,1)}
-  @keyframes quip{from{opacity:0;transform:translateY(6px) scale(.96)}to{opacity:1;transform:none}}
+  /* ---------- talk track ---------- */
+  .quip{font-size:12.5px;color:var(--muted);margin-top:16px;min-height:19px}
+  .quip.pop{animation:pop .4s cubic-bezier(.34,1.6,.5,1)}
+  @keyframes pop{from{opacity:0;transform:translateY(6px) scale(.96)}to{opacity:1;transform:none}}
 
-  /* ---------- log ---------- */
-  .log{margin-top:20px;border-top:1px solid var(--line);padding-top:14px}
-  .log-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
-  .log-head span{font-size:11px;text-transform:uppercase;letter-spacing:.11em;color:var(--muted);font-weight:600}
-  ol{list-style:none;font-size:13px;font-variant-numeric:tabular-nums}
-  li{display:flex;align-items:center;gap:8px;padding:7px 2px;border-bottom:1px dashed var(--line);color:var(--muted)}
-  li:last-child{border-bottom:none}
-  li .n{width:18px;height:18px;border-radius:50%;background:#f4f2ec;color:var(--muted);font-size:10px;font-weight:700;display:grid;place-items:center;flex:none}
-  li .span{color:var(--ink);font-weight:520}
-  li .dur{margin-left:auto;font-weight:650;color:var(--ink)}
-  li.live .n{background:#e7f7ee;color:var(--green-deep)}
-  li.live .dur{color:var(--green-deep)}
-  .empty{font-size:13px;color:var(--muted);padding:8px 2px 2px}
-
-  /* ---------- footer row ---------- */
-  .foot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px}
-  .target{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
-  .target input{
-    width:52px;font:inherit;font-size:12px;font-variant-numeric:tabular-nums;
-    padding:5px 7px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink);
-    text-align:center;
-  }
-  .target input:focus{outline:2px solid #dcd7ca;outline-offset:1px}
+  /* ---------- reset ---------- */
   .reset{
-    font:inherit;font-size:12px;font-weight:600;color:var(--muted);
-    background:transparent;border:1px solid var(--line);border-radius:10px;
-    padding:7px 13px;cursor:pointer;transition:all .18s;
+    font:inherit;font-size:12px;font-weight:500;color:#bdb8a8;
+    background:none;border:none;cursor:pointer;padding:8px 10px;
+    margin-top:20px;border-radius:8px;transition:color .18s,transform .18s;
   }
-  .reset:hover{color:#c2410c;border-color:#f5c9ae;background:#fff7f3;transform:rotate(-1.5deg)}
-  .reset:active{transform:scale(.94)}
-  .reset.armed{color:#c2410c;border-color:#f0a882;background:#fff2ec}
+  .reset:hover{color:#c2410c}
+  .reset:active{transform:scale(.93)}
+  .reset.armed{color:#c2410c;font-weight:600}
+  .reset[hidden]{display:none}
 
-  .tagline{text-align:center;font-size:11.5px;color:#b3ae9f;margin-top:16px;letter-spacing:.02em}
-  .tagline b{font-weight:650;color:#8b8779;letter-spacing:.01em}
+  .sig{font-size:11px;color:#c5c0b1;margin-top:34px;letter-spacing:.02em}
+  .sig b{font-weight:600;color:#a8a394}
 
   /* ---------- fx ---------- */
-  #fx{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:99}
+  #fx{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:9}
   .flyer{position:absolute;font-size:22px;animation:fly .95s ease-out forwards}
   @keyframes fly{
     0%{opacity:1;transform:translate(-50%,-50%) scale(.4)}
-    100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% - 90px)) scale(1.25) rotate(var(--rot))}
+    100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% - 92px)) scale(1.25) rotate(var(--rot))}
   }
   .confetti{position:absolute;width:8px;height:13px;border-radius:2px;animation:fall linear forwards}
   @keyframes fall{
@@ -185,66 +112,26 @@
     100%{opacity:0;transform:translateY(105vh) rotate(760deg)}
   }
 
-  @media (prefers-reduced-motion:reduce){
-    *,*::after{animation:none!important;transition:none!important}
-  }
+  @media (prefers-reduced-motion:reduce){*,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
 
-<div class="app">
-  <header>
-    <h1>Logout Time <span>· swipe tracker</span></h1>
-    <div class="today" id="today"></div>
-  </header>
+<main>
+  <div class="label">You can log out at</div>
+  <div class="time pending" id="logout">—:—</div>
+  <div class="sub" id="sub"></div>
 
-  <main class="card">
-    <div class="status" id="status"><i class="dot"></i><span id="statusText">Not started</span></div>
+  <div class="actions">
+    <button class="btn in" id="btnIn"><span class="emoji">🏢</span>Swipe In</button>
+    <button class="btn out" id="btnOut"><span class="emoji">🏃</span>Swipe Out</button>
+  </div>
+  <div class="quip" id="quip">Tap Swipe In when you badge into the office.</div>
 
-    <div class="readout">
-      <div class="label">You can log out at</div>
-      <div class="time pending" id="logout">—:—</div>
-      <div class="sub" id="sub"></div>
-    </div>
+  <button class="reset" id="btnReset" hidden>Reset day</button>
 
-    <div class="bar"><div class="fill" id="fill"></div></div>
-    <div class="legend">
-      <div>Inside <b id="worked">0h 00m</b></div>
-      <div>Left <b id="remaining">4h 00m</b></div>
-    </div>
-
-    <div class="actions">
-      <button class="btn in" id="btnIn">
-        <span class="emoji">🏢</span>
-        <span class="txt">Swipe In</span>
-      </button>
-      <button class="btn out" id="btnOut">
-        <span class="emoji">🏃</span>
-        <span class="txt">Swipe Out</span>
-      </button>
-    </div>
-    <div class="quip" id="quip">Tap Swipe In when you badge into the office.</div>
-
-    <div class="log">
-      <div class="log-head"><span>Today's swipes</span><span id="count"></span></div>
-      <ol id="list"></ol>
-      <div class="empty" id="empty">No swipes yet. The clock starts when you do. 🫡</div>
-    </div>
-
-    <div class="foot">
-      <label class="target">
-        Target
-        <input id="targetH" type="number" min="0" max="23" step="1" inputmode="numeric" aria-label="Target hours" />
-        h
-        <input id="targetM" type="number" min="0" max="59" step="5" inputmode="numeric" aria-label="Target minutes" />
-        m
-      </label>
-      <button class="reset" id="btnReset">Reset day</button>
-    </div>
-  </main>
-
-  <p class="tagline">a <b>Sandeep Kumar</b> production</p>
-</div>
+  <p class="sig">a <b>Sandeep Kumar</b> production</p>
+</main>
 
 <div id="fx"></div>
 
@@ -252,110 +139,86 @@
 (() => {
   "use strict";
 
-  /* ---------------------------------------------------------------
-     State — sessions are [{ in: <ms>, out: <ms|null> }]
-     Time "inside" is the sum of every in→out span. Logout time is
-     the moment that sum reaches the target (default 4h).
-  ---------------------------------------------------------------- */
-  const KEY = "logout-timer/v1";
-  const DEFAULT_TARGET = 4 * 60 * 60 * 1000;
+  /* Sessions are [{ in: <ms>, out: <ms|null> }]. Time "inside" is the sum of
+     every in→out span; the gaps between them are free. Logout time is the
+     instant that sum reaches TARGET. */
+  const KEY = "logout-timer/v2";
+  const TARGET = 4 * 60 * 60 * 1000;
 
   let sessions = [];
-  let target = DEFAULT_TARGET;
   let celebrated = false;
 
   const $ = id => document.getElementById(id);
   const el = {
-    today: $("today"), status: $("status"), statusText: $("statusText"),
-    logout: $("logout"), sub: $("sub"), fill: $("fill"),
-    worked: $("worked"), remaining: $("remaining"),
-    btnIn: $("btnIn"), btnOut: $("btnOut"), btnReset: $("btnReset"),
-    quip: $("quip"), list: $("list"), empty: $("empty"), count: $("count"),
-    targetH: $("targetH"), targetM: $("targetM"), fx: $("fx")
+    logout: $("logout"), sub: $("sub"), quip: $("quip"), fx: $("fx"),
+    btnIn: $("btnIn"), btnOut: $("btnOut"), btnReset: $("btnReset")
   };
 
   /* ------------------------------ storage ------------------------------ */
-  const dayKey = (d = new Date()) =>
-    `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+  const dayKey = (d = new Date()) => `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
 
   function save() {
-    try {
-      localStorage.setItem(KEY, JSON.stringify({
-        day: dayKey(), sessions, target, celebrated
-      }));
-    } catch (_) { /* private mode — run in memory */ }
+    try { localStorage.setItem(KEY, JSON.stringify({ day: dayKey(), sessions, celebrated })); }
+    catch (_) { /* private mode — run in memory */ }
   }
 
   function load() {
     try {
       const raw = JSON.parse(localStorage.getItem(KEY) || "null");
-      if (!raw) return;
-      if (typeof raw.target === "number") target = raw.target;
-      // A new calendar day starts a fresh sheet; the target carries over.
-      if (raw.day !== dayKey()) return;
+      if (!raw || raw.day !== dayKey()) return;   // new calendar day = fresh sheet
       if (Array.isArray(raw.sessions)) sessions = raw.sessions;
       celebrated = !!raw.celebrated;
     } catch (_) { /* corrupt entry — start clean */ }
   }
 
-  /* ------------------------------ helpers ------------------------------ */
+  /* ------------------------------ the math ----------------------------- */
   const isIn = () => sessions.length > 0 && sessions[sessions.length - 1].out === null;
 
-  function insideMs(now) {
-    return sessions.reduce((sum, s) => sum + ((s.out ?? now) - s.in), 0);
-  }
+  const insideMs = now => sessions.reduce((sum, s) => sum + ((s.out ?? now) - s.in), 0);
 
-  // The clock instant at which accumulated inside-time hits the target.
-  // Returns null when we're outside and haven't got there yet.
+  // Clock instant at which inside-time hits TARGET; null if we're outside
+  // and haven't got there yet.
   function logoutAt(now) {
     let acc = 0;
     for (const s of sessions) {
       const span = (s.out ?? now) - s.in;
-      if (acc + span >= target) return s.in + (target - acc);
+      if (acc + span >= TARGET) return s.in + (TARGET - acc);
       acc += span;
     }
-    return isIn() ? now + (target - acc) : null;
+    return isIn() ? now + (TARGET - acc) : null;
   }
 
-  function fmtClock(ts) {
-    return new Date(ts).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-  }
+  const fmtClock = ts => new Date(ts).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
 
   function fmtDur(ms, withSecs) {
     ms = Math.max(0, Math.round(ms / 1000) * 1000);
-    const h = Math.floor(ms / 3600000);
-    const m = Math.floor(ms / 60000) % 60;
-    const s = Math.floor(ms / 1000) % 60;
+    const h = Math.floor(ms / 3600000), m = Math.floor(ms / 60000) % 60, s = Math.floor(ms / 1000) % 60;
     const pad = n => String(n).padStart(2, "0");
-    if (withSecs && h === 0) return `${m}m ${pad(s)}s`;
-    return `${h}h ${pad(m)}m`;
+    return withSecs && h === 0 ? `${m}m ${pad(s)}s` : `${h}h ${pad(m)}m`;
   }
 
   /* ------------------------------- quips ------------------------------- */
   const QUIPS = {
-    in: ["Clocked in. The grind begins. 💼", "You're inside! Coffee counts as work. ☕",
-         "Badge beeped. Timer running. ⏱️", "Back at it. Look busy. 👀",
-         "The chair missed you. 🪑", "Focus mode: allegedly on. 🧠"],
+    in:  ["Clocked in. The grind begins. 💼", "You're inside! Coffee counts as work. ☕",
+          "Badge beeped. Timer running. ⏱️", "Back at it. Look busy. 👀",
+          "The chair missed you. 🪑", "Focus mode: allegedly on. 🧠"],
     out: ["Stepped out. Timer paused. 🧊", "Break well earned. 🍵",
           "Escaped! Temporarily. 🚪", "Clock's chilling till you're back. 😌",
           "Snack run detected. 🍪", "Touching grass. Approved. 🌿"],
-    doubleIn: ["You're already inside, champ. 😅", "Can't enter twice. Physics. 🙃",
-               "Already in! Try working instead. 😉"],
-    doubleOut: ["You're not even in yet! 🤨", "Swipe in first, escape later. 🚧",
-                "Nothing to escape from. Yet. 😌"],
-    done: ["4 hours cleared — you're free! 🎉", "Target hit. Go live your life. 🥳",
-           "Done and dusted. Shoo! 👋"]
+    dblIn:  ["You're already inside, champ. 😅", "Can't enter twice. Physics. 🙃"],
+    dblOut: ["You're not even in yet! 🤨", "Swipe in first, escape later. 🚧"],
+    done:   ["4 hours cleared — you're free! 🎉", "Target hit. Go live your life. 🥳"]
   };
   const pick = a => a[Math.floor(Math.random() * a.length)];
 
   function say(text) {
     el.quip.textContent = text;
     el.quip.classList.remove("pop");
-    void el.quip.offsetWidth;      // restart the animation
+    void el.quip.offsetWidth;          // restart the animation
     el.quip.classList.add("pop");
   }
 
-  /* -------------------------------- fx -------------------------------- */
+  /* -------------------------------- fx --------------------------------- */
   function flyEmoji(btn, chars) {
     const r = btn.getBoundingClientRect();
     for (let i = 0; i < 6; i++) {
@@ -397,59 +260,24 @@
   function render() {
     const now = Date.now();
     const inside = insideMs(now);
-    const left = Math.max(0, target - inside);
-    const done = inside >= target;
+    const left = Math.max(0, TARGET - inside);
+    const done = inside >= TARGET;
     const active = isIn();
-
-    // status pill
-    el.status.className = "status " + (active ? "in" : sessions.length ? "out" : "");
-    el.statusText.textContent = active ? "Inside · counting"
-      : sessions.length ? "Outside · paused" : "Not started";
-
-    // the headline number
     const at = logoutAt(now);
+
     el.logout.className = "time" + (done ? " done" : at === null ? " pending" : "");
-    if (at !== null) {
-      el.logout.innerHTML = fmtClock(at).replace(/\s?([AP]M)$/i, "<em>$1</em>");
-    } else {
-      el.logout.textContent = sessions.length ? "paused" : "—:—";
-    }
+    if (at !== null) el.logout.innerHTML = fmtClock(at).replace(/\s?([AP]M)$/i, "<em>$1</em>");
+    else el.logout.textContent = sessions.length ? "paused" : "—:—";
 
-    if (done) {
-      el.sub.innerHTML = `Target met at <b>${fmtClock(at)}</b> — you're clear to go. 🎉`;
-    } else if (active) {
-      el.sub.innerHTML = `<b>${fmtDur(left, true)}</b> to go`;
-    } else if (sessions.length) {
-      el.sub.innerHTML = `Swipe in now → out at <b>${fmtClock(now + left)}</b>`;
-    } else {
-      el.sub.innerHTML = `Swipe in to start the ${fmtDur(target)} clock`;
-    }
+    if (done)                 el.sub.innerHTML = `Free since <b>${fmtClock(at)}</b> — go home 🎉`;
+    else if (active)          el.sub.innerHTML = `<b>${fmtDur(left, true)}</b> to go · inside ${fmtDur(inside)}`;
+    else if (sessions.length) el.sub.innerHTML = `Swipe in now → out at <b>${fmtClock(now + left)}</b>`;
+    else                      el.sub.innerHTML = `Swipe in to start the 4-hour clock`;
 
-    // progress
-    el.fill.style.width = Math.min(100, (inside / target) * 100) + "%";
-    el.worked.textContent = fmtDur(inside);
-    el.remaining.textContent = fmtDur(left);
-
-    // buttons
     el.btnIn.disabled = active;
     el.btnOut.disabled = !active;
+    el.btnReset.hidden = sessions.length === 0;
 
-    // log
-    el.list.innerHTML = "";
-    el.empty.hidden = sessions.length > 0;
-    el.count.textContent = sessions.length ? `${sessions.length} ${sessions.length === 1 ? "entry" : "entries"}` : "";
-    sessions.forEach((s, i) => {
-      const live = s.out === null;
-      const li = document.createElement("li");
-      if (live) li.className = "live";
-      li.innerHTML =
-        `<span class="n">${i + 1}</span>` +
-        `<span class="span">${fmtClock(s.in)} → ${live ? "now" : fmtClock(s.out)}</span>` +
-        `<span class="dur">${fmtDur((s.out ?? now) - s.in, true)}</span>`;
-      el.list.appendChild(li);
-    });
-
-    // one-time celebration
     if (done && !celebrated) {
       celebrated = true;
       confetti();
@@ -460,7 +288,7 @@
 
   /* ------------------------------ actions ------------------------------ */
   el.btnIn.addEventListener("click", () => {
-    if (isIn()) return nope(el.btnIn, QUIPS.doubleIn);
+    if (isIn()) return nope(el.btnIn, QUIPS.dblIn);
     sessions.push({ in: Date.now(), out: null });
     flyEmoji(el.btnIn, ["✅", "💼", "⚡", "🚀"]);
     say(pick(QUIPS.in));
@@ -468,45 +296,35 @@
   });
 
   el.btnOut.addEventListener("click", () => {
-    if (!isIn()) return nope(el.btnOut, QUIPS.doubleOut);
+    if (!isIn()) return nope(el.btnOut, QUIPS.dblOut);
     sessions[sessions.length - 1].out = Date.now();
     flyEmoji(el.btnOut, ["🏃", "💨", "🍃", "🎈"]);
     say(pick(QUIPS.out));
     save(); render();
   });
 
-  // Reset asks once, then commits — no browser dialog to break the vibe.
+  // Reset confirms in place — no browser dialog.
   let armed = null;
   el.btnReset.addEventListener("click", () => {
     if (!armed) {
       el.btnReset.textContent = "Sure? Tap again";
       el.btnReset.classList.add("armed");
-      armed = setTimeout(() => {
-        armed = null;
-        el.btnReset.textContent = "Reset day";
-        el.btnReset.classList.remove("armed");
-      }, 3000);
+      armed = setTimeout(disarm, 3000);
       return;
     }
-    clearTimeout(armed); armed = null;
-    el.btnReset.textContent = "Reset day";
-    el.btnReset.classList.remove("armed");
+    clearTimeout(armed); disarm();
     sessions = []; celebrated = false;
     say("Clean slate. Pretend today just started. 🧼");
     save(); render();
   });
 
-  function readTarget() {
-    const h = Math.min(23, Math.max(0, parseInt(el.targetH.value, 10) || 0));
-    const m = Math.min(59, Math.max(0, parseInt(el.targetM.value, 10) || 0));
-    target = (h * 60 + m) * 60000 || DEFAULT_TARGET;
-    celebrated = insideMs(Date.now()) >= target && celebrated;
-    save(); render();
+  function disarm() {
+    armed = null;
+    el.btnReset.textContent = "Reset day";
+    el.btnReset.classList.remove("armed");
   }
-  el.targetH.addEventListener("change", readTarget);
-  el.targetM.addEventListener("change", readTarget);
 
-  // pointer-tracked shine on the buttons
+  // pointer-tracked shine
   for (const b of [el.btnIn, el.btnOut]) {
     b.addEventListener("pointermove", e => {
       const r = b.getBoundingClientRect();
@@ -517,9 +335,6 @@
 
   /* -------------------------------- boot ------------------------------- */
   load();
-  el.targetH.value = Math.floor(target / 3600000);
-  el.targetM.value = Math.floor(target / 60000) % 60;
-  el.today.textContent = new Date().toLocaleDateString([], { weekday: "short", day: "numeric", month: "short" });
   render();
   setInterval(render, 1000);
   document.addEventListener("visibilitychange", () => { if (!document.hidden) render(); });
