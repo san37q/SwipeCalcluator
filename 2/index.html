@@ -55,9 +55,23 @@
   </main>
   <script>
     const target = 4 * 60 * 60 * 1000;
+    const storageKey = "four-hour-clock-visits";
     const $ = id => document.getElementById(id);
     const ui = { time: $("time"), message: $("message"), bar: $("bar"), in: $("in"), out: $("out") };
-    let visits = [], completedBurst = false;
+    function loadVisits() {
+      try {
+        const stored = JSON.parse(localStorage.getItem(storageKey));
+        if (!Array.isArray(stored)) return [];
+        return stored.filter(visit =>
+          Number.isFinite(visit?.in) &&
+          (visit.out === null || (Number.isFinite(visit.out) && visit.out >= visit.in))
+        );
+      } catch {
+        return [];
+      }
+    }
+    function saveVisits() { localStorage.setItem(storageKey, JSON.stringify(visits)); }
+    let visits = loadVisits(), completedBurst = false;
 
     const active = () => visits.at(-1)?.out === null;
     const worked = now => visits.reduce((total, visit) => total + ((visit.out ?? now) - visit.in), 0);
@@ -82,8 +96,8 @@
       else if (exit) { ui.time.textContent=clock(exit); ui.message.innerHTML=`<b>${duration(remaining)}</b> left on the clock.`; }
       else { ui.time.textContent="Paused"; ui.message.innerHTML=`<b>${duration(remaining)}</b> remains. Swipe in to continue.`; }
     }
-    ui.in.onclick=()=>{ if (!active()) { visits.push({in:Date.now(),out:null}); spark(ui.in,["☀️","⚡","💼"]); render(); } };
-    ui.out.onclick=()=>{ if (active()) { visits.at(-1).out=Date.now(); spark(ui.out,["🌿","☕","💨"]); render(); } };
+    ui.in.onclick=()=>{ if (!active()) { visits.push({in:Date.now(),out:null}); saveVisits(); spark(ui.in,["☀️","⚡","💼"]); render(); } };
+    ui.out.onclick=()=>{ if (active()) { visits.at(-1).out=Date.now(); saveVisits(); spark(ui.out,["🌿","☕","💨"]); render(); } };
     let resetTimer;
     const resetButton = $("reset");
     function disarmReset() {
@@ -102,6 +116,7 @@
       disarmReset();
       visits=[];
       completedBurst=false;
+      localStorage.removeItem(storageKey);
       render();
     };
     render(); setInterval(render,1000);
