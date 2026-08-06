@@ -31,7 +31,7 @@
     .orb::before { content:""; grid-area:1/1; width:100%; aspect-ratio:1; border-radius:50%; background:#fff; box-shadow:inset 0 0 0 1px #f0eefe; }
     .clock { position:relative; z-index:1; grid-area:1/1; }
     .clock-label { color:var(--muted); font-size:.65rem; font-weight:900; letter-spacing:.12em; text-transform:uppercase; }
-    #time { margin:4px 0 0; font-size:clamp(2.1rem,10vw,3.15rem); line-height:.95; letter-spacing:-.08em; font-variant-numeric:tabular-nums; }
+    #time { margin:4px 0 0; white-space:nowrap; font-size:clamp(1.65rem,8vw,2.4rem); line-height:.95; letter-spacing:-.08em; font-variant-numeric:tabular-nums; }
     #time.waiting { font-size:1.35rem; letter-spacing:-.035em; }
     .progress-note { margin-top:7px; color:var(--purple); font-size:.73rem; font-weight:800; }
     .sticker { position:absolute; right:-8px; bottom:14px; display:grid; place-items:center; width:52px; aspect-ratio:1; border:4px solid #fff; border-radius:18px; background:var(--peach); font-size:1.55rem; box-shadow:0 8px 14px rgba(166,113,52,.17); transform:rotate(9deg); }
@@ -83,7 +83,7 @@
     let visits = loadVisits(), completedBurst = false, resetTimer;
     const active = () => visits.at(-1)?.out === null;
     const worked = now => visits.reduce((sum,v) => sum + ((v.out ?? now)-v.in),0);
-    const clock = ms => new Date(ms).toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
+    const clock = ms => new Date(ms).toLocaleTimeString([], {hour:"2-digit",minute:"2-digit",hour12:false});
     const duration = ms => { const m=Math.ceil(Math.max(0,ms)/60000); return m >= 60 ? `${Math.floor(m/60)}h ${String(m%60).padStart(2,"0")}m` : `${m}m`; };
     const saveVisits = () => localStorage.setItem(storageKey,JSON.stringify(visits));
     function logoutTime(now) { let total=0; for (const v of visits) { const span=(v.out ?? now)-v.in; if (total+span >= target) return v.in+target-total; total+=span; } return active() ? now+target-total : null; }
