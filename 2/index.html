@@ -33,6 +33,7 @@
     .credit { margin:16px -25px -22px; padding:12px 25px 14px; border-top:1px solid rgba(23,35,45,.07); color:#9aa8b0; font-size:.68rem; letter-spacing:.14em; font-weight:800; text-transform:uppercase; }
     .reset { margin-top:28px; padding:7px 12px; border-radius:8px; background:transparent; box-shadow:none; color:#87959d; font-size:.75rem; font-weight:700; }
     .reset:hover { transform:none!important; box-shadow:none; color:#e5674d; }
+    .reset.armed { color:#e5674d; }
     .burst { position:fixed; pointer-events:none; font-size:1.35rem; animation:pop .8s ease-out forwards; }
     @keyframes pop { from { opacity:1; transform:translate(-50%,-50%) scale(.4); } to { opacity:0; transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) rotate(60deg) scale(1.4); } }
     @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none!important; transition:none!important; } }
@@ -83,12 +84,25 @@
     }
     ui.in.onclick=()=>{ if (!active()) { visits.push({in:Date.now(),out:null}); spark(ui.in,["☀️","⚡","💼"]); render(); } };
     ui.out.onclick=()=>{ if (active()) { visits.at(-1).out=Date.now(); spark(ui.out,["🌿","☕","💨"]); render(); } };
-    $("reset").onclick=()=>{
-      if (!visits.length || window.confirm("Start over? This clears all of today’s swipe times.")) {
-        visits=[];
-        completedBurst=false;
-        render();
+    let resetTimer;
+    const resetButton = $("reset");
+    function disarmReset() {
+      clearTimeout(resetTimer);
+      resetTimer = undefined;
+      resetButton.textContent = "Start over";
+      resetButton.classList.remove("armed");
+    }
+    resetButton.onclick=()=>{
+      if (!resetTimer) {
+        resetButton.textContent = "Sure? Tap again";
+        resetButton.classList.add("armed");
+        resetTimer = setTimeout(disarmReset, 3000);
+        return;
       }
+      disarmReset();
+      visits=[];
+      completedBurst=false;
+      render();
     };
     render(); setInterval(render,1000);
   </script>
