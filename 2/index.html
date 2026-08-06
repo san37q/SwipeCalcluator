@@ -31,7 +31,7 @@
     .out:hover .icon { transform:translateX(-7px) rotate(12deg) scale(1.18); }
     .hint { margin:20px 0 0; color:#91a0a8; font-size:.74rem; }
     .credit { margin:16px -25px -22px; padding:12px 25px 14px; border-top:1px solid rgba(23,35,45,.07); color:#9aa8b0; font-size:.68rem; letter-spacing:.14em; font-weight:800; text-transform:uppercase; }
-    .reset { margin-top:13px; padding:5px 10px; border-radius:8px; background:transparent; box-shadow:none; color:#87959d; font-size:.75rem; font-weight:700; }
+    .reset { margin-top:28px; padding:7px 12px; border-radius:8px; background:transparent; box-shadow:none; color:#87959d; font-size:.75rem; font-weight:700; }
     .reset:hover { transform:none!important; box-shadow:none; color:#e5674d; }
     .burst { position:fixed; pointer-events:none; font-size:1.35rem; animation:pop .8s ease-out forwards; }
     @keyframes pop { from { opacity:1; transform:translate(-50%,-50%) scale(.4); } to { opacity:0; transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) rotate(60deg) scale(1.4); } }
@@ -83,7 +83,13 @@
     }
     ui.in.onclick=()=>{ if (!active()) { visits.push({in:Date.now(),out:null}); spark(ui.in,["☀️","⚡","💼"]); render(); } };
     ui.out.onclick=()=>{ if (active()) { visits.at(-1).out=Date.now(); spark(ui.out,["🌿","☕","💨"]); render(); } };
-    $("reset").onclick=()=>{ visits=[]; completedBurst=false; render(); };
+    $("reset").onclick=()=>{
+      if (!visits.length || window.confirm("Start over? This clears all of today’s swipe times.")) {
+        visits=[];
+        completedBurst=false;
+        render();
+      }
+    };
     render(); setInterval(render,1000);
   </script>
 </body>
