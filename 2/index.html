@@ -3,122 +3,106 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Four Hour Clock</title>
+  <meta name="theme-color" content="#6759d8">
+  <title>The 4 Hour Escape</title>
   <style>
-    :root { --ink:#17232d; --muted:#6f7d87; --card:#fffdf8; --mint:#75e6c8; --sky:#79baff; --peach:#ffb38a; }
+    :root { --ink:#29234a; --muted:#756f98; --paper:#fffdfd; --purple:#6759d8; --violet:#8b75f3; --pink:#ff88ae; --peach:#ffbd81; --mint:#5fe0be; --line:#ece9ff; }
     * { box-sizing:border-box; }
-    body { margin:0; min-height:100vh; display:grid; place-items:center; overflow:hidden; color:var(--ink); font-family:ui-rounded,"Nunito",system-ui,sans-serif; background:linear-gradient(140deg,#c7f4ed,#dcecff 55%,#fff0ca); }
-    body::before, body::after { content:""; position:fixed; border-radius:50%; filter:blur(2px); opacity:.55; z-index:-1; }
-    body::before { width:18rem;height:18rem;background:#ffcf9e;left:-5rem;top:-5rem; }
-    body::after { width:22rem;height:22rem;background:#a4dcff;right:-8rem;bottom:-8rem; }
-    main { width:min(92vw,430px); padding:30px 25px 22px; text-align:center; background:rgba(255,253,248,.84); border:1px solid rgba(255,255,255,.9); border-radius:32px; box-shadow:0 22px 70px rgba(45,87,112,.20); backdrop-filter:blur(12px); }
-    .eyebrow { margin:0; color:var(--muted); font-size:.72rem; letter-spacing:.16em; font-weight:800; text-transform:uppercase; }
-    h1 { margin:7px 0 2px; font-size:clamp(2.75rem,12vw,4.3rem); line-height:1; letter-spacing:-.07em; font-variant-numeric:tabular-nums; }
-    h1.waiting { font-size:2.2rem; letter-spacing:-.04em; color:#8d9aa2; }
-    .message { min-height:25px; margin:14px 0 25px; color:var(--muted); font-size:.94rem; }
-    .message b { color:var(--ink); }
-    .progress { height:12px; margin:0 3px 28px; overflow:hidden; border-radius:99px; background:#e7edf0; }
-    .progress span { display:block; width:0%; height:100%; border-radius:inherit; background:linear-gradient(90deg,var(--sky),var(--mint)); transition:width .5s ease; }
-    .swipes { display:grid; grid-template-columns:1fr 1fr; gap:13px; }
-    button { border:0; cursor:pointer; color:var(--ink); font:inherit; font-weight:900; border-radius:20px; padding:17px 8px 15px; box-shadow:0 6px 0 rgba(23,35,45,.16), 0 12px 18px rgba(23,35,45,.11); transition:transform .16s cubic-bezier(.2,1.6,.5,1), box-shadow .16s, filter .2s; }
-    button:hover:not(:disabled) { transform:translateY(-4px) rotate(-1deg); box-shadow:0 10px 0 rgba(23,35,45,.14),0 18px 22px rgba(23,35,45,.13); }
-    button:nth-child(2):hover:not(:disabled) { transform:translateY(-4px) rotate(1deg); }
-    button:active:not(:disabled) { transform:translateY(5px) scale(.96); box-shadow:0 1px 0 rgba(23,35,45,.15); }
-    button:disabled { cursor:not-allowed; filter:grayscale(.7); opacity:.42; box-shadow:0 3px 0 rgba(23,35,45,.11); }
-    .in { background:var(--mint); } .out { background:var(--peach); }
-    .icon { display:block; margin-bottom:3px; font-size:1.65rem; transition:transform .35s cubic-bezier(.2,1.7,.4,1); }
-    button:hover .icon { transform:translateX(7px) rotate(-12deg) scale(1.18); }
-    .out:hover .icon { transform:translateX(-7px) rotate(12deg) scale(1.18); }
-    .hint { margin:20px 0 0; color:#91a0a8; font-size:.74rem; }
-    .credit { margin:16px -25px -22px; padding:12px 25px 14px; border-top:1px solid rgba(23,35,45,.07); color:#9aa8b0; font-size:.68rem; letter-spacing:.14em; font-weight:800; text-transform:uppercase; }
-    .reset { margin-top:28px; padding:7px 12px; border-radius:8px; background:transparent; box-shadow:none; color:#87959d; font-size:.75rem; font-weight:700; }
-    .reset:hover { transform:none!important; box-shadow:none; color:#e5674d; }
-    .reset.armed { color:#e5674d; }
-    .burst { position:fixed; pointer-events:none; font-size:1.35rem; animation:pop .8s ease-out forwards; }
-    @keyframes pop { from { opacity:1; transform:translate(-50%,-50%) scale(.4); } to { opacity:0; transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) rotate(60deg) scale(1.4); } }
+    body { min-height:100vh; margin:0; display:grid; place-items:center; overflow-x:hidden; color:var(--ink); font-family:ui-rounded,"SF Pro Rounded","Nunito",system-ui,sans-serif; background:#f2efff; }
+    body::before, body::after { content:""; position:fixed; z-index:-2; width:35rem; aspect-ratio:1; border-radius:50%; filter:blur(1px); }
+    body::before { top:-20rem; left:-15rem; background:#ffc3d8; }
+    body::after { right:-17rem; bottom:-18rem; background:#bff5e8; }
+    .sprinkle { position:fixed; z-index:-1; font-size:clamp(1.4rem,4vw,2.5rem); opacity:.65; animation:float 7s ease-in-out infinite; user-select:none; }
+    .s1 { top:9%; left:7%; transform:rotate(-18deg); } .s2 { top:13%; right:8%; animation-delay:-2.6s; } .s3 { bottom:10%; left:8%; animation-delay:-4.2s; }
+    @keyframes float { 50% { transform:translateY(-13px) rotate(14deg); } }
+    main { width:min(92vw,480px); margin:28px 0; overflow:hidden; border:1px solid rgba(255,255,255,.9); border-radius:34px; background:rgba(255,253,253,.88); box-shadow:0 28px 80px rgba(74,61,139,.2); backdrop-filter:blur(18px); }
+    .top { padding:24px 25px 16px; display:flex; align-items:center; justify-content:space-between; }
+    .brand { display:flex; align-items:center; gap:10px; font-size:.78rem; font-weight:900; letter-spacing:.08em; }
+    .brand-mark { width:34px; aspect-ratio:1; display:grid; place-items:center; border-radius:12px; color:white; font-size:1.15rem; background:linear-gradient(135deg,var(--purple),var(--pink)); box-shadow:0 6px 14px #c6c0f6; }
+    .badge { padding:7px 10px; border-radius:999px; color:#468876; background:#dcf8ed; font-size:.68rem; font-weight:900; letter-spacing:.04em; }
+    .hero { padding:5px 25px 22px; text-align:center; }
+    .eyebrow { margin:0 0 7px; color:var(--purple); font-size:.7rem; font-weight:900; letter-spacing:.18em; text-transform:uppercase; }
+    h1 { margin:0; font-size:clamp(2rem,8vw,3rem); line-height:1; letter-spacing:-.065em; }
+    .message { min-height:25px; max-width:325px; margin:11px auto 0; color:var(--muted); font-size:.9rem; line-height:1.4; }
+    .message b { color:var(--purple); }
+    .dashboard { padding:22px 25px 26px; background:linear-gradient(180deg,#f6f4ff,#fff); border-radius:30px 30px 0 0; }
+    .orb-wrap { position:relative; display:grid; place-items:center; margin:0 auto 20px; width:205px; aspect-ratio:1; }
+    .orb { width:100%; aspect-ratio:1; padding:12px; display:grid; place-items:center; border-radius:50%; background:conic-gradient(var(--mint) calc(var(--progress) * 1%),#e7e4f7 0); box-shadow:0 10px 28px rgba(94,80,176,.12); transition:background .55s ease; }
+    .orb::before { content:""; grid-area:1/1; width:100%; aspect-ratio:1; border-radius:50%; background:#fff; box-shadow:inset 0 0 0 1px #f0eefe; }
+    .clock { position:relative; z-index:1; grid-area:1/1; }
+    .clock-label { color:var(--muted); font-size:.65rem; font-weight:900; letter-spacing:.12em; text-transform:uppercase; }
+    #time { margin:4px 0 0; font-size:clamp(2.1rem,10vw,3.15rem); line-height:.95; letter-spacing:-.08em; font-variant-numeric:tabular-nums; }
+    #time.waiting { font-size:1.35rem; letter-spacing:-.035em; }
+    .progress-note { margin-top:7px; color:var(--purple); font-size:.73rem; font-weight:800; }
+    .sticker { position:absolute; right:-8px; bottom:14px; display:grid; place-items:center; width:52px; aspect-ratio:1; border:4px solid #fff; border-radius:18px; background:var(--peach); font-size:1.55rem; box-shadow:0 8px 14px rgba(166,113,52,.17); transform:rotate(9deg); }
+    .stats { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:0 0 18px; }
+    .stat { min-height:70px; padding:12px; text-align:left; border:1px solid var(--line); border-radius:18px; background:#fff; }
+    .stat span { display:block; margin-bottom:5px; color:var(--muted); font-size:.62rem; font-weight:900; letter-spacing:.08em; text-transform:uppercase; }
+    .stat strong { font-size:1rem; letter-spacing:-.03em; }
+    .actions { display:grid; grid-template-columns:1fr 1fr; gap:11px; }
+    button { border:0; cursor:pointer; font:inherit; font-weight:900; transition:transform .18s cubic-bezier(.2,1.5,.5,1), box-shadow .18s, filter .18s; }
+    .action { min-height:96px; padding:12px 8px; border-radius:22px; color:var(--ink); box-shadow:0 6px 0 rgba(49,39,103,.16),0 12px 20px rgba(49,39,103,.13); }
+    .action:hover:not(:disabled) { transform:translateY(-4px) rotate(-1deg); box-shadow:0 10px 0 rgba(49,39,103,.12),0 18px 22px rgba(49,39,103,.16); }
+    .action:active:not(:disabled) { transform:translateY(4px) scale(.97); box-shadow:0 2px 0 rgba(49,39,103,.15); }
+    .action:disabled { cursor:not-allowed; opacity:.44; filter:grayscale(.75); }
+    .action-icon { display:block; margin-bottom:4px; font-size:1.8rem; transition:transform .25s ease; } .action:hover:not(:disabled) .action-icon { transform:scale(1.18) rotate(-9deg); }
+    .action small { display:block; margin-top:3px; color:rgba(41,35,74,.65); font-size:.68rem; font-weight:700; }
+    .in { background:linear-gradient(135deg,#78eed2,#b2f8e8); } .out { background:linear-gradient(135deg,#ffaf83,#ffddab); }
+    .fun-row { display:flex; align-items:center; justify-content:center; gap:8px; margin-top:17px; }
+    .pep { color:var(--muted); font-size:.73rem; font-weight:700; }
+    .boost { width:30px; aspect-ratio:1; padding:0; border-radius:10px; color:white; background:var(--purple); box-shadow:0 4px 0 #5044b5; } .boost:active { transform:translateY(3px); box-shadow:0 1px 0 #5044b5; }
+    .reset { display:block; width:auto; margin:24px auto 0; padding:8px 13px; border-radius:10px; color:#9a95b3; background:transparent; box-shadow:none; font-size:.72rem; }
+    .reset:hover { color:#dd5b84; transform:translateY(-2px); } .reset.armed { color:#dd5b84; background:#fff0f5; }
+    footer { padding:15px; border-top:1px solid #f0eef8; color:#aaa5c2; text-align:center; font-size:.64rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; }
+    .burst { position:fixed; z-index:5; pointer-events:none; font-style:normal; font-size:1.45rem; animation:pop .8s ease-out forwards; }
+    @keyframes pop { from { opacity:1; transform:translate(-50%,-50%) scale(.4); } to { opacity:0; transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) rotate(70deg) scale(1.45); } }
+    @media (max-width:370px) { main { border-radius:26px; } .top,.hero,.dashboard { padding-left:18px; padding-right:18px; } .orb-wrap { width:184px; } }
     @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none!important; transition:none!important; } }
   </style>
 </head>
 <body>
+  <span class="sprinkle s1">✦</span><span class="sprinkle s2">☀️</span><span class="sprinkle s3">✿</span>
   <main>
-    <p class="eyebrow">Your escape time</p>
-    <h1 id="time" class="waiting">Swipe in</h1>
-    <p class="message" id="message">Your four-hour work clock is waiting.</p>
-    <div class="progress" aria-label="Work time completed"><span id="bar"></span></div>
-    <div class="swipes">
-      <button class="in" id="in"><span class="icon">→</span>Swipe in</button>
-      <button class="out" id="out" disabled><span class="icon">←</span>Swipe out</button>
-    </div>
-    <button class="reset" id="reset">Start over</button>
-    <p class="hint">Time away is paused and deducted automatically.</p>
-    <footer class="credit">A Sandeep Kumar production</footer>
+    <header class="top"><div class="brand"><span class="brand-mark">⏱</span>THE 4 HOUR ESCAPE</div><span class="badge" id="badge">READY</span></header>
+    <section class="hero"><p class="eyebrow">Mission control</p><h1>Make time count.</h1><p class="message" id="message">Swipe in when you arrive — future you will be grateful.</p></section>
+    <section class="dashboard">
+      <div class="orb-wrap"><div class="orb" id="orb" style="--progress:0"><div class="clock"><div class="clock-label">Escape at</div><div id="time" class="waiting">Swipe in</div><div class="progress-note" id="progressNote">4 hour mission</div></div></div><span class="sticker" id="sticker">🛼</span></div>
+      <div class="stats"><div class="stat"><span>Total focus</span><strong id="total">0m</strong></div><div class="stat"><span>Current status</span><strong id="status">Waiting</strong></div></div>
+      <div class="actions"><button class="action in" id="in"><span class="action-icon">🪩</span>Swipe in<small>Let’s do this</small></button><button class="action out" id="out" disabled><span class="action-icon">🌴</span>Swipe out<small>Take a breather</small></button></div>
+      <div class="fun-row"><span class="pep" id="pep">A tiny bit of joy, on the clock.</span><button class="boost" id="boost" aria-label="Get a pep talk">✦</button></div>
+      <button class="reset" id="reset">Start over</button>
+    </section>
+    <footer>A Sandeep Kumar production</footer>
   </main>
   <script>
-    const target = 4 * 60 * 60 * 1000;
-    const storageKey = "four-hour-clock-visits";
+    const target = 4 * 60 * 60 * 1000, storageKey = "four-hour-clock-visits";
     const $ = id => document.getElementById(id);
-    const ui = { time: $("time"), message: $("message"), bar: $("bar"), in: $("in"), out: $("out") };
-    function loadVisits() {
-      try {
-        const stored = JSON.parse(localStorage.getItem(storageKey));
-        if (!Array.isArray(stored)) return [];
-        return stored.filter(visit =>
-          Number.isFinite(visit?.in) &&
-          (visit.out === null || (Number.isFinite(visit.out) && visit.out >= visit.in))
-        );
-      } catch {
-        return [];
-      }
-    }
-    function saveVisits() { localStorage.setItem(storageKey, JSON.stringify(visits)); }
-    let visits = loadVisits(), completedBurst = false;
-
+    const ui = { time:$("time"), message:$("message"), orb:$("orb"), note:$("progressNote"), total:$("total"), status:$("status"), badge:$("badge"), sticker:$("sticker"), in:$("in"), out:$("out"), pep:$("pep") };
+    const pepTalks = ["You’re doing brilliantly. Keep the good energy.","Small wins count. You’ve got this.","Hydrate, stretch, sparkle, repeat.","Your future self is cheering for you.","Make room for a tiny victory dance."];
+    function loadVisits() { try { const stored=JSON.parse(localStorage.getItem(storageKey)); return Array.isArray(stored) ? stored.filter(v => Number.isFinite(v?.in) && (v.out === null || (Number.isFinite(v.out) && v.out >= v.in))) : []; } catch { return []; } }
+    let visits = loadVisits(), completedBurst = false, resetTimer;
     const active = () => visits.at(-1)?.out === null;
-    const worked = now => visits.reduce((total, visit) => total + ((visit.out ?? now) - visit.in), 0);
-    const clock = ms => new Date(ms).toLocaleTimeString([], { hour:"numeric", minute:"2-digit" });
-    const duration = ms => { const minutes = Math.ceil(Math.max(0,ms) / 60000); return `${Math.floor(minutes/60)}h ${String(minutes%60).padStart(2,"0")}m`; };
-    function logoutTime(now) {
-      let total = 0;
-      for (const visit of visits) { const span = (visit.out ?? now) - visit.in; if (total + span >= target) return visit.in + target - total; total += span; }
-      return active() ? now + target - total : null;
-    }
-    function spark(button, symbols) {
-      const r = button.getBoundingClientRect();
-      for (let i=0;i<9;i++) { const bit=document.createElement("i"); bit.className="burst"; bit.textContent=symbols[i%symbols.length]; bit.style.left=`${r.left+r.width/2}px`; bit.style.top=`${r.top+r.height/2}px`; bit.style.setProperty("--x",`${(Math.random()-.5)*150}px`); bit.style.setProperty("--y",`${(Math.random()-.5)*130}px`); document.body.append(bit); setTimeout(()=>bit.remove(),850); }
-    }
+    const worked = now => visits.reduce((sum,v) => sum + ((v.out ?? now)-v.in),0);
+    const clock = ms => new Date(ms).toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
+    const duration = ms => { const m=Math.ceil(Math.max(0,ms)/60000); return m >= 60 ? `${Math.floor(m/60)}h ${String(m%60).padStart(2,"0")}m` : `${m}m`; };
+    const saveVisits = () => localStorage.setItem(storageKey,JSON.stringify(visits));
+    function logoutTime(now) { let total=0; for (const v of visits) { const span=(v.out ?? now)-v.in; if (total+span >= target) return v.in+target-total; total+=span; } return active() ? now+target-total : null; }
+    function spark(button,symbols) { const r=button.getBoundingClientRect(); for(let i=0;i<11;i++) { const bit=document.createElement("i"); bit.className="burst"; bit.textContent=symbols[i%symbols.length]; bit.style.left=`${r.left+r.width/2}px`; bit.style.top=`${r.top+r.height/2}px`; bit.style.setProperty("--x",`${(Math.random()-.5)*190}px`); bit.style.setProperty("--y",`${(Math.random()-.5)*160}px`); document.body.append(bit); setTimeout(()=>bit.remove(),850); } }
     function render() {
-      const now=Date.now(), total=worked(now), remaining=Math.max(0,target-total), exit=logoutTime(now), done=total>=target;
-      ui.bar.style.width=`${Math.min(100,total/target*100)}%`;
-      ui.in.disabled=active(); ui.out.disabled=!active();
-      if (!visits.length) { ui.time.textContent="Swipe in"; ui.time.className="waiting"; ui.message.textContent="Your four-hour work clock is waiting."; return; }
+      const now=Date.now(), total=worked(now), remaining=Math.max(0,target-total), exit=logoutTime(now), done=total>=target, progress=Math.min(100,total/target*100);
+      ui.orb.style.setProperty("--progress",progress); ui.total.textContent=duration(total); ui.in.disabled=active(); ui.out.disabled=!active();
+      if (!visits.length) { ui.time.textContent="Swipe in"; ui.time.className="waiting"; ui.note.textContent="4 hour mission"; ui.status.textContent="Waiting"; ui.badge.textContent="READY"; ui.sticker.textContent="🛼"; ui.message.textContent="Swipe in when you arrive — future you will be grateful."; return; }
       ui.time.className="";
-      if (done) { ui.time.textContent="All done!"; ui.message.innerHTML="Four hours complete — <b>you’re free to go.</b>"; if (!completedBurst) { completedBurst=true; spark(ui.out,["✨","🎉","🌟"]); } }
-      else if (exit) { ui.time.textContent=clock(exit); ui.message.innerHTML=`<b>${duration(remaining)}</b> left on the clock.`; }
-      else { ui.time.textContent="Paused"; ui.message.innerHTML=`<b>${duration(remaining)}</b> remains. Swipe in to continue.`; }
+      if (done) { ui.time.textContent="Free!"; ui.note.textContent="Mission complete"; ui.status.textContent="Complete!"; ui.badge.textContent="DONE ✦"; ui.sticker.textContent="🎉"; ui.message.innerHTML="Four hours complete — <b>go enjoy your freedom.</b>"; if (!completedBurst) { completedBurst=true; spark(ui.out,["🎉","✨","🌟","💜"]); } }
+      else if (exit) { ui.time.textContent=clock(exit); ui.note.textContent=`${duration(remaining)} left`; ui.status.textContent="Clocking in"; ui.badge.textContent="IN FOCUS"; ui.sticker.textContent="⚡"; ui.message.innerHTML=`You’re on a roll. <b>${duration(remaining)}</b> to freedom.`; }
+      else { ui.time.textContent="Paused"; ui.note.textContent=`${duration(remaining)} remaining`; ui.status.textContent="On a break"; ui.badge.textContent="PAUSED"; ui.sticker.textContent="☕"; ui.message.innerHTML=`Take your time — <b>${duration(remaining)}</b> is still on the clock.`; }
     }
-    ui.in.onclick=()=>{ if (!active()) { visits.push({in:Date.now(),out:null}); saveVisits(); spark(ui.in,["☀️","⚡","💼"]); render(); } };
-    ui.out.onclick=()=>{ if (active()) { visits.at(-1).out=Date.now(); saveVisits(); spark(ui.out,["🌿","☕","💨"]); render(); } };
-    let resetTimer;
-    const resetButton = $("reset");
-    function disarmReset() {
-      clearTimeout(resetTimer);
-      resetTimer = undefined;
-      resetButton.textContent = "Start over";
-      resetButton.classList.remove("armed");
-    }
-    resetButton.onclick=()=>{
-      if (!resetTimer) {
-        resetButton.textContent = "Sure? Tap again";
-        resetButton.classList.add("armed");
-        resetTimer = setTimeout(disarmReset, 3000);
-        return;
-      }
-      disarmReset();
-      visits=[];
-      completedBurst=false;
-      localStorage.removeItem(storageKey);
-      render();
-    };
+    ui.in.onclick=()=>{ if (!active()) { visits.push({in:Date.now(),out:null}); saveVisits(); ui.pep.textContent="Badge in! Let the good work begin."; spark(ui.in,["✨","⚡","💜","🪩"]); render(); } };
+    ui.out.onclick=()=>{ if (active()) { visits.at(-1).out=Date.now(); saveVisits(); ui.pep.textContent="Break mode unlocked. Enjoy it."; spark(ui.out,["☕","🌴","💨","🌼"]); render(); } };
+    $("boost").onclick=e=>{ ui.pep.textContent=pepTalks[Math.floor(Math.random()*pepTalks.length)]; spark(e.currentTarget,["✦","💜","✨"]); };
+    const resetButton=$("reset");
+    function disarmReset() { clearTimeout(resetTimer); resetTimer=undefined; resetButton.textContent="Start over"; resetButton.classList.remove("armed"); }
+    resetButton.onclick=()=>{ if (!resetTimer) { resetButton.textContent="Sure? Tap again"; resetButton.classList.add("armed"); resetTimer=setTimeout(disarmReset,3000); return; } disarmReset(); visits=[]; completedBurst=false; localStorage.removeItem(storageKey); ui.pep.textContent="A fresh start looks good on you."; render(); };
     render(); setInterval(render,1000);
   </script>
 </body>
