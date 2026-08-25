@@ -80,6 +80,30 @@
   .btn.nope{animation:nope .38s cubic-bezier(.36,.07,.19,.97)}
   @keyframes nope{10%,90%{transform:translateX(-3px)}20%,80%{transform:translateX(5px)}30%,50%,70%{transform:translateX(-7px)}40%,60%{transform:translateX(7px)}}
 
+  /* ---------- target hit: the buttons throw a party ---------- */
+  /* --lean flips the sway so the pair mirrors each other instead of
+     marching in step; the delay puts them a half-beat apart. */
+  .btn.party{animation:dance 1.15s ease-in-out infinite}
+  .btn.in.party{--lean:-1}
+  .btn.out.party{--lean:1;animation-delay:.18s}
+  .btn.party:disabled{filter:none;opacity:.82}   /* nobody sits this one out */
+  @keyframes dance{
+    0%,100%{transform:none}
+    18%{transform:translateY(-10px) rotate(calc(var(--lean) * 6deg)) scale(1.05)}
+    36%{transform:translateY(0) rotate(calc(var(--lean) * -2deg)) scale(.98)}
+    54%{transform:translateY(-6px) rotate(calc(var(--lean) * -5deg)) scale(1.03)}
+    72%{transform:translateY(0) rotate(calc(var(--lean) * 2deg)) scale(.99)}
+    86%{transform:translateY(-3px) rotate(calc(var(--lean) * 3deg)) scale(1.01)}
+  }
+  .btn.party .emoji{animation:giggle .34s ease-in-out infinite}
+  @keyframes giggle{
+    0%,100%{transform:rotate(-11deg) scale(1.12)}
+    50%{transform:rotate(11deg) scale(1.2)}
+  }
+  /* keep the press + rejection feedback readable mid-dance */
+  .btn.party:active:not(:disabled){animation:none;transform:translateY(5px) scale(.97)}
+  .btn.party.nope{animation:nope .38s cubic-bezier(.36,.07,.19,.97)}
+
   /* ---------- talk track ---------- */
   .quip{font-size:12.5px;color:var(--muted);margin-top:16px;min-height:19px}
   .quip.pop{animation:pop .4s cubic-bezier(.34,1.6,.5,1)}
@@ -277,6 +301,10 @@
     el.btnIn.disabled = active;
     el.btnOut.disabled = !active;
     el.btnReset.hidden = sessions.length === 0;
+
+    // Target reached — let them boogie until the day is reset.
+    el.btnIn.classList.toggle("party", done);
+    el.btnOut.classList.toggle("party", done);
 
     if (done && !celebrated) {
       celebrated = true;
