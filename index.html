@@ -142,6 +142,17 @@
 <body>
 
 <main>
+  <div class="label">Daily work hours</div>
+  <select id="hoursSelect" style="
+    font-size:16px;font-weight:600;color:var(--ink);
+    background:var(--bg);border:2px solid var(--muted);border-radius:8px;
+    padding:8px 12px;margin-bottom:20px;cursor:pointer;width:100%;
+  ">
+    <option value="4">4 hours</option>
+    <option value="6">6 hours</option>
+    <option value="8">8 hours</option>
+  </select>
+
   <div class="label">You can log out at</div>
   <div class="time pending" id="logout">—:—</div>
   <div class="sub" id="sub"></div>
@@ -167,7 +178,8 @@
      every in→out span; the gaps between them are free. Logout time is the
      instant that sum reaches TARGET. */
   const KEY = "logout-timer/v2";
-  const TARGET = 4 * 60 * 60 * 1000;
+  const HOURS_KEY = "logout-timer/hours";
+  let TARGET = 4 * 60 * 60 * 1000;
 
   let sessions = [];
   let celebrated = false;
@@ -175,7 +187,8 @@
   const $ = id => document.getElementById(id);
   const el = {
     logout: $("logout"), sub: $("sub"), quip: $("quip"), fx: $("fx"),
-    btnIn: $("btnIn"), btnOut: $("btnOut"), btnReset: $("btnReset")
+    btnIn: $("btnIn"), btnOut: $("btnOut"), btnReset: $("btnReset"),
+    hoursSelect: $("hoursSelect")
   };
 
   /* ------------------------------ storage ------------------------------ */
@@ -193,6 +206,26 @@
       if (Array.isArray(raw.sessions)) sessions = raw.sessions;
       celebrated = !!raw.celebrated;
     } catch (_) { /* corrupt entry — start clean */ }
+  }
+
+  function setHours(hours) {
+    TARGET = hours * 60 * 60 * 1000;
+    try { localStorage.setItem(HOURS_KEY, hours.toString()); }
+    catch (_) { /* private mode — run in memory */ }
+    celebrated = false;
+    save();
+    render();
+  }
+
+  function loadHours() {
+    try {
+      const saved = localStorage.getItem(HOURS_KEY);
+      if (saved) {
+        const hours = parseInt(saved, 10);
+        el.hoursSelect.value = hours.toString();
+        setHours(hours);
+      }
+    } catch (_) { /* corrupt entry — use default */ }
   }
 
   /* ------------------------------ the math ----------------------------- */
@@ -230,10 +263,14 @@
           "Escaped! Temporarily. 🚪", "Clock's chilling till you're back. 😌",
           "Snack run detected. 🍪", "Touching grass. Approved. 🌿"],
     dblIn:  ["You're already inside, champ. 😅", "Can't enter twice. Physics. 🙃"],
-    dblOut: ["You're not even in yet! 🤨", "Swipe in first, escape later. 🚧"],
-    done:   ["4 hours cleared — you're free! 🎉", "Target hit. Go live your life. 🥳"]
+    dblOut: ["You're not even in yet! 🤨", "Swipe in first, escape later. 🚧"]
   };
   const pick = a => a[Math.floor(Math.random() * a.length)];
+
+  const getDoneQuips = () => [
+    `${TARGET / 3600000} hours cleared — you're free! 🎉`,
+    "Target hit. Go live your life. 🥳"
+  ];
 
   function say(text) {
     el.quip.textContent = text;
@@ -293,10 +330,11 @@
     if (at !== null) el.logout.innerHTML = fmtClock(at).replace(/\s?([AP]M)$/i, "<em>$1</em>");
     else el.logout.textContent = sessions.length ? "paused" : "—:—";
 
+    const hours = TARGET / 3600000;
     if (done)                 el.sub.innerHTML = `Free since <b>${fmtClock(at)}</b> — go home 🎉`;
     else if (active)          el.sub.innerHTML = `<b>${fmtDur(left, true)}</b> to go · inside ${fmtDur(inside)}`;
     else if (sessions.length) el.sub.innerHTML = `Swipe in now → out at <b>${fmtClock(now + left)}</b>`;
-    else                      el.sub.innerHTML = `Swipe in to start the 4-hour clock`;
+    else                      el.sub.innerHTML = `Swipe in to start the ${hours}-hour clock`;
 
     el.btnIn.disabled = active;
     el.btnOut.disabled = !active;
@@ -309,7 +347,7 @@
     if (done && !celebrated) {
       celebrated = true;
       confetti();
-      say(pick(QUIPS.done));
+      say(pick(getDoneQuips()));
       save();
     }
   }
@@ -361,8 +399,14 @@
     });
   }
 
+  // hours selector
+  el.hoursSelect.addEventListener("change", e => {
+    setHours(parseInt(e.target.value, 10));
+  });
+
   /* -------------------------------- boot ------------------------------- */
   load();
+  loadHours();
   render();
   setInterval(render, 1000);
   document.addEventListener("visibilitychange", () => { if (!document.hidden) render(); });
